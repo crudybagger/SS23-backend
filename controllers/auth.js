@@ -2,8 +2,10 @@ const User = require("../models/user");
 // const Logger = require("../models/logger");
 const { check, validationResult } = require("express-validator");
 var jwt = require("jsonwebtoken");
-var expressJwt = require("express-jwt");
+const { expressjwt: expressJwt } = require("express-jwt");
+
 require("dotenv").config();
+const authRoutes = require("../routes/auth");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 

@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 let express = require('express');
 let app = express();
 const path = require('path')
@@ -48,6 +49,6 @@ app.use("/", promoCodeRoutes);
 app.use("/payment", paymentRoutes);
 app.use("/", offlineUserRoutes);
 
-app.listen(3000,()=> {
+app.listen(process.env.PORT || 3000,()=> {
     console.log("Started");
 })
