@@ -120,14 +120,14 @@ exports.Oauth = async (req, res) => {
   }).then(async (response) => {
     const data = await response.json()
 
-    const firstName = data.given_name;
-    const lastName = data.family_name;
+    const firstName = data.given_name ? data.given_name : '';
+    const lastName = data.family_name ? data.family_name : '';
     const email = data.email;
-    const picture = data.picture;
-    console.log(data);
+    const profilePicture = data.picture;
+//     console.log(data);
     let user = await User.findOne({ email })
     if (!user) {
-      user = await User.create({ email, firstName, lastName, profilePicture: picture })
+      user = await User.create({ email, firstName, lastName, profilePicture})
     }
     console.log(user)
     const token = jwt.sign({
