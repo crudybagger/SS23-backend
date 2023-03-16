@@ -1,4 +1,4 @@
-const User = require("../models/user");
+const User = require("../models/oauthUser");
 // const Logger = require("../models/logger");
 const { check, validationResult } = require("express-validator");
 var jwt = require("jsonwebtoken");
@@ -8,6 +8,7 @@ require("dotenv").config();
 const authRoutes = require("../routes/auth");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const { default: fetch } = require("node-fetch");
 
 exports.getUser = (req, res) => {
   const id = req.auth._id;
@@ -107,6 +108,40 @@ exports.signin = (req, res) => {
     return res.json({ token, user: user });
   });
 };
+
+exports.Oauth = async (req, res) => {
+  const { googleAccessToken } = req.body;
+  console.log("called")
+  fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: {
+      "Authorization": `Bearer ${googleAccessToken}`,
+      "Accept": "*/*"
+    }
+  }).then(async (response) => {
+    const data = await response.json()
+
+    const firstName = data.given_name;
+    const lastName = data.family_name;
+    const email = data.email;
+    const picture = data.picture;
+    console.log(data);
+    let user = await User.findOne({ email })
+    if (!user) {
+      user = await User.create({ email, firstName, lastName, profilePicture: picture })
+    }
+    console.log(user)
+    const token = jwt.sign({
+      email: user.email,
+      id: user._id
+    }, "anything", { expiresIn: "7d" })
+
+    res
+    .status(200)
+    .json({user, token})
+  }).catch((err) => {
+    res.status(400).json({message: "Invalid access token!"})
+  })
+}
 
 exports.signout = (req, res) => {
   res.clearCookie("token");
