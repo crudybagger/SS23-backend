@@ -140,7 +140,7 @@ exports.Oauth = async (req, res) => {
     .status(200)
     .json({user, token})
   }).catch((err) => {
-    res.status(400).json({message: "Invalid access token!"})
+    res.status(400).json({message: err})
   })
 }
 
