@@ -126,6 +126,7 @@ exports.Oauth = async (req, res) => {
     const profilePicture = data.picture;
     console.log(data);
     let user = await User.findOne({ email })
+    console.log({email , firstName, lastName , profilePicture})
     if (!user) {
       user = await User.create({ email, firstName, lastName, profilePicture})
     }
